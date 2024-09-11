@@ -1,6 +1,7 @@
 package emailnormalizer
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -81,4 +82,26 @@ func (n *Normalizer) Normalize(email string) string {
 	}
 
 	return username + "@" + domain
+}
+
+// NormalizeEx : converts email to canonical form
+func (n *Normalizer) NormalizeEx(email string, defaultRule NormalizingRule) (string, bool, error) {
+	prepared := strings.TrimSpace(email)
+	prepared = strings.TrimRight(prepared, ".")
+
+	parts := strings.Split(prepared, "@")
+	if len(parts) != 2 {
+		return prepared, false, fmt.Errorf("invalid email")
+	}
+
+	username := parts[0]                // The first part of the address may be case sensitive (RFC 5336)
+	domain := strings.ToLower(parts[1]) // Domain names are case-insensitive (RFC 4343)
+
+	if rule, ok := n.rules[domain]; ok {
+		return rule.ProcessUsername(username) + "@" + rule.ProcessDomain(domain), true, nil
+	}
+	if defaultRule != nil {
+		return defaultRule.ProcessUsername(username) + "@" + defaultRule.ProcessDomain(domain), false, nil
+	}
+	return username + "@" + domain, false, nil
 }
