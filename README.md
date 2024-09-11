@@ -1,3 +1,7 @@
+this is a fork of github.com/dimuska139/go-email-normalizer/v3 
+Added a function NormalizeEx for convinience.
+If you don't need it, please use the original repo directly.
+
 # go-email-normalizer - email normalization for Go
 
 [![Build Status](https://travis-ci.org/dimuska139/go-email-normalizer.svg?branch=master)](https://travis-ci.org/dimuska139/go-email-normalizer)
